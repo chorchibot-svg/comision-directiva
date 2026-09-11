@@ -150,7 +150,7 @@ function loadFromSheets() {
     document.getElementById('board').innerHTML = '<div class="error">⚠️ Configuración pendiente: reemplazar SHEET_ID en el HTML con el ID de la planilla Google Sheets.</div>';
     return;
   }
-  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=1181677794';
+  var url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR4m9EZePKeaQIdBXbO1sSY-rAUXX4HAvfdqX1YpCxzjkO7JSUUKTQQhp6sW4iK7GYCsSdgPgglJvQL/pub?gid=1181677794&single=true&output=csv';
   fetch(url)
     .then(function(r){ return r.text(); })
     .then(function(text){
