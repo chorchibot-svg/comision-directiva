@@ -72,6 +72,7 @@ tr.detail-row.open .detail-panel{display:block}
 .expanded .arrow{transform:rotate(90deg)}
 .loading{text-align:center;padding:48px 16px;color:var(--text3);font-size:13px}
 .error{text-align:center;padding:32px 16px;color:#b91c1c;font-size:12px;background:#FEF2F2;border-radius:8px;margin:12px}
+.age-chip{display:inline-block;font-size:9px;font-family:monospace;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:1px 5px;white-space:nowrap;margin-top:3px}
 </style>
 </head>
 <body>
@@ -127,10 +128,28 @@ function csvToItems(text) {
       def: (cols[5]||'').trim(),
       st: (cols[6]||'').trim(),
       resp: respRaw,
-      s: (cols[8]||'sin').trim()
+      s: (cols[8]||'sin').trim(),
+      fi: (cols[9]||'').trim(),
+      fc: (cols[10]||'').trim()
     });
   }
   return items;
+}
+
+function parseDateAR(s) {
+  if (!s) return null;
+  var p = s.split('/');
+  if (p.length !== 3) return null;
+  return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+}
+
+function daysBetween(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+function daysLabel(n) {
+  if (n === 1) return '1 día';
+  return n + ' días';
 }
 
 function parseCSVLine(line) {
@@ -160,6 +179,35 @@ function loadFromSheets() {
     .catch(function(e){
       document.getElementById('board').innerHTML = '<div class="error">Error al cargar datos. Verificar que la planilla esté publicada y el SHEET_ID sea correcto.<br><small>' + e + '</small></div>';
     });
+}
+
+function ageChip(t) {
+  var fi = parseDateAR(t.fi);
+  if (!fi) return '';
+  var ref = t.fc ? parseDateAR(t.fc) : new Date();
+  if (!ref) return '';
+  var d = daysBetween(fi, ref);
+  if (d < 0) return '';
+  return '<br><span class="age-chip">'+d+'d</span>';
+}
+
+function datePanelHtml(t) {
+  if (!t.fi && !t.fc) return '';
+  var now = new Date();
+  var fi = parseDateAR(t.fi);
+  var fc = parseDateAR(t.fc);
+  var html = '';
+  if (fi) {
+    html += '<div class="dp-block"><div class="dp-label">Fecha inicio</div><div class="dp-text">'+t.fi+'</div></div>';
+    var elapsed = daysBetween(fi, fc || now);
+    if (fc) {
+      html += '<div class="dp-block"><div class="dp-label">Fecha cierre</div><div class="dp-text">'+t.fc+'</div></div>';
+      html += '<div class="dp-block"><div class="dp-label">Duración total</div><div class="dp-text hi">'+daysLabel(elapsed)+'</div></div>';
+    } else {
+      html += '<div class="dp-block"><div class="dp-label">Tiempo transcurrido</div><div class="dp-text hi">'+daysLabel(elapsed)+' (abierto)</div></div>';
+    }
+  }
+  return html;
 }
 
 function respHtml(resp) {
@@ -193,7 +241,7 @@ function render() {
         '<td class="c-num">'+t.n+'</td>'+
         '<td class="c-tema"><div class="t-title">'+t.t+'</div><div class="t-sum">'+t.sum+'</div></td>'+
         '<td class="c-resp">'+respHtml(t.resp)+'</td>'+
-        '<td class="c-est"><span class="sb sb-'+t.s+'">'+SLABEL[t.s]+'</span></td>'+
+        '<td class="c-est"><span class="sb sb-'+t.s+'">'+SLABEL[t.s]+'</span>'+ageChip(t)+'</td>'+
         '<td class="c-arr"><span class="arrow">'+(open?'&#8964;':'&#8250;')+'</span></td>'+
         '</tr>'+
         '<tr class="detail-row'+(open?' open':'')+'">'+
@@ -201,6 +249,7 @@ function render() {
           '<div class="dp-block"><div class="dp-label">Contexto</div><div class="dp-text">'+t.d+'</div></div>'+
           '<div class="dp-block"><div class="dp-label">Último movimiento</div><div class="dp-text hi">'+t.st+'</div></div>'+
           '<div class="dp-block"><div class="dp-label">Próximo paso</div><div class="dp-text">'+t.def+'</div></div>'+
+          datePanelHtml(t)+
         '</div></td>'+
         '</tr>';
     }).join('');
