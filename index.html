@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CD · Temas semana</title>
+<style>
+:root{
+  --bg:#F5F4F0;--surface:#fff;--border:#E0DED8;
+  --text:#1A1916;--text2:#6B6960;--text3:#9E9C94;
+  --c-term:#166534;--bg-term:#DCFCE7;
+  --c-proc:#1D4ED8;--bg-proc:#DBEAFE;
+  --c-pend:#92400E;--bg-pend:#FEF3C7;
+  --c-sin:#5F5E5A;--bg-sin:#EEEDE8;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:56px}
+.hdr{background:#1A1916;color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:100}
+.hdr-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.hdr-top h1{font-size:15px;font-weight:600;letter-spacing:.02em}
+.hdr-top span{font-size:10px;opacity:.4;font-family:monospace}
+.legend{display:flex;flex-wrap:wrap;gap:10px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.6)}
+.ldot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ld-term{background:#4ade80}.ld-proc{background:#60a5fa}.ld-pend{background:#fbbf24}.ld-sin{background:#9ca3af}
+.filters{background:#1A1916;padding:0 12px 12px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:sticky;top:60px;z-index:99}
+.filters::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.55);font-family:inherit;transition:all .15s}
+.pill.active{background:#fff;color:#1A1916;border-color:#fff}
+.pill.f-term.active{background:var(--bg-term);color:var(--c-term);border-color:#86efac}
+.pill.f-proc.active{background:var(--bg-proc);color:var(--c-proc);border-color:#93c5fd}
+.pill.f-pend.active{background:var(--bg-pend);color:var(--c-pend);border-color:#fcd34d}
+.pill.f-sin.active{background:var(--bg-sin);color:var(--c-sin);border-color:#d1d5db}
+.stats{display:flex;gap:7px;padding:12px 12px 4px}
+.stat{flex:1;background:var(--surface);border-radius:8px;padding:9px 8px 7px;text-align:center;border:1px solid var(--border)}
+.sn{font-size:20px;font-weight:600;line-height:1}
+.sl{font-size:9px;color:var(--text3);margin-top:3px;font-family:monospace;letter-spacing:.04em}
+.n-term{color:var(--c-term)}.n-proc{color:var(--c-proc)}.n-pend{color:var(--c-pend)}.n-sin{color:var(--c-sin)}
+.grp-hdr{display:flex;align-items:center;gap:10px;background:#1A1916;color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;margin:14px 10px 0}
+.grp-name{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:monospace}
+.grp-count{font-size:10px;opacity:.4;font-family:monospace}
+.tbl-wrap{margin:0 10px 2px;border-radius:0 0 8px 8px;overflow:hidden;border:1px solid var(--border);border-top:none}
+table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surface);table-layout:fixed}
+th{background:#2E2D29;color:rgba(255,255,255,.5);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;text-align:left;font-family:monospace;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;word-break:normal;overflow-wrap:break-word}
+tr:last-child td{border-bottom:none}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#F5F3EE}
+tr.row.expanded td{background:#F8F6F1}
+.c-num{width:28px;color:var(--text3);font-family:monospace;font-size:11px}
+.c-tema{width:auto}
+.c-resp{width:100px}
+.c-est{width:84px}
+.c-arr{width:20px;color:var(--text3);font-size:13px;text-align:center}
+.t-title{font-weight:600;color:var(--text);font-size:12px;line-height:1.35}
+.t-sum{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+.resp-chip{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;border:1px solid #C7D2FE;background:#EEF2FF;color:#4338CA;margin:1px 2px 1px 0;white-space:nowrap}
+.sb{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;font-family:monospace;white-space:nowrap}
+.sb-term{background:var(--bg-term);color:var(--c-term)}
+.sb-proc{background:var(--bg-proc);color:var(--c-proc)}
+.sb-pend{background:var(--bg-pend);color:var(--c-pend)}
+.sb-sin{background:var(--bg-sin);color:var(--c-sin)}
+tr.detail-row td{padding:0;border-bottom:1px solid var(--border);background:#FAFAF7}
+.detail-panel{padding:12px 14px 14px;display:none}
+tr.detail-row.open .detail-panel{display:block}
+.dp-block{margin-bottom:10px}
+.dp-block:last-child{margin-bottom:0}
+.dp-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-family:monospace;margin-bottom:3px}
+.dp-text{font-size:12px;color:var(--text2);line-height:1.6}
+.dp-text.hi{color:var(--text);font-weight:500}
+.arrow{display:inline-block;transition:transform .2s}
+.expanded .arrow{transform:rotate(90deg)}
+.loading{text-align:center;padding:48px 16px;color:var(--text3);font-size:13px}
+.error{text-align:center;padding:32px 16px;color:#b91c1c;font-size:12px;background:#FEF2F2;border-radius:8px;margin:12px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top"><h1>Comisión Directiva</h1><span id="fecha-hdr">cargando…</span></div>
+  <div class="legend">
+    <div class="leg"><div class="ldot ld-term"></div>Terminado</div>
+    <div class="leg"><div class="ldot ld-proc"></div>En proceso</div>
+    <div class="leg"><div class="ldot ld-pend"></div>Pendiente</div>
+    <div class="leg"><div class="ldot ld-sin"></div>Sin novedad</div>
+  </div>
+</div>
+
+<div class="filters" id="filters"></div>
+
+<div class="stats">
+  <div class="stat"><div class="sn" id="s-total">—</div><div class="sl">TEMAS</div></div>
+  <div class="stat"><div class="sn n-term" id="s-term">—</div><div class="sl">TERMINADO</div></div>
+  <div class="stat"><div class="sn n-proc" id="s-proc">—</div><div class="sl">EN PROCESO</div></div>
+  <div class="stat"><div class="sn n-pend" id="s-pend">—</div><div class="sl">PENDIENTE</div></div>
+  <div class="stat"><div class="sn n-sin" id="s-sin">—</div><div class="sl">SIN NOV.</div></div>
+</div>
+
+<div id="board"><div class="loading">Cargando temas…</div></div>
+
+<script>
+// ─── CONFIGURACIÓN ───────────────────────────────────────────────
+// Reemplazar SHEET_ID con el ID de la planilla Google Sheets una vez publicada
+var SHEET_ID = '1kDGLS3jmpe2vHPX3pkZX1bkjl8o55JUfpNKE05vCmhA';
+// ─────────────────────────────────────────────────────────────────
+
+var SLABEL = {term:'Terminado',proc:'En proceso',pend:'Pendiente',sin:'Sin novedad'};
+var filter = 'all';
+var openDetail = {};
+var T = [];
+
+function csvToItems(text) {
+  var lines = text.split('\n').filter(function(l){ return l.trim(); });
+  var items = [];
+  for (var i = 1; i < lines.length; i++) {
+    var cols = parseCSVLine(lines[i]);
+    if (cols.length < 9) continue;
+    var n = parseInt(cols[0]);
+    if (isNaN(n)) continue;
+    var respRaw = cols[7] ? cols[7].split(',').map(function(r){ return r.trim(); }) : [];
+    items.push({
+      n: n,
+      g: (cols[1]||'').trim(),
+      t: (cols[2]||'').trim(),
+      sum: (cols[3]||'').trim(),
+      d: (cols[4]||'').trim(),
+      def: (cols[5]||'').trim(),
+      st: (cols[6]||'').trim(),
+      resp: respRaw,
+      s: (cols[8]||'sin').trim()
+    });
+  }
+  return items;
+}
+
+function parseCSVLine(line) {
+  var result = [], cur = '', inQ = false;
+  for (var i = 0; i < line.length; i++) {
+    var c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+function loadFromSheets() {
+  if (SHEET_ID === 'PENDIENTE_CONFIGURAR') {
+    document.getElementById('board').innerHTML = '<div class="error">⚠️ Configuración pendiente: reemplazar SHEET_ID en el HTML con el ID de la planilla Google Sheets.</div>';
+    return;
+  }
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=1181677794';
+  fetch(url)
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      T = csvToItems(text);
+      render();
+    })
+    .catch(function(e){
+      document.getElementById('board').innerHTML = '<div class="error">Error al cargar datos. Verificar que la planilla esté publicada y el SHEET_ID sea correcto.<br><small>' + e + '</small></div>';
+    });
+}
+
+function respHtml(resp) {
+  return resp.map(function(r){ return '<span class="resp-chip">'+r+'</span>'; }).join('');
+}
+
+function render() {
+  var filtered = T.filter(function(t){
+    if (filter === 'all') return true;
+    if (filter === 'sterm') return t.s === 'term';
+    if (filter === 'sproc') return t.s === 'proc';
+    if (filter === 'spend') return t.s === 'pend';
+    if (filter === 'ssin') return t.s === 'sin';
+    return true;
+  });
+
+  document.getElementById('s-total').textContent = T.length;
+  document.getElementById('s-term').textContent = T.filter(function(t){return t.s==='term';}).length;
+  document.getElementById('s-proc').textContent = T.filter(function(t){return t.s==='proc';}).length;
+  document.getElementById('s-pend').textContent = T.filter(function(t){return t.s==='pend';}).length;
+  document.getElementById('s-sin').textContent = T.filter(function(t){return t.s==='sin';}).length;
+
+  var groups = [];
+  filtered.forEach(function(t){ if(groups.indexOf(t.g)===-1) groups.push(t.g); });
+
+  var html = groups.map(function(g){
+    var items = filtered.filter(function(t){return t.g===g;});
+    var rows = items.map(function(t){
+      var open = !!openDetail[t.n];
+      return '<tr class="row'+(open?' expanded':'')+'" onclick="toggleDetail('+t.n+')">'+
+        '<td class="c-num">'+t.n+'</td>'+
+        '<td class="c-tema"><div class="t-title">'+t.t+'</div><div class="t-sum">'+t.sum+'</div></td>'+
+        '<td class="c-resp">'+respHtml(t.resp)+'</td>'+
+        '<td class="c-est"><span class="sb sb-'+t.s+'">'+SLABEL[t.s]+'</span></td>'+
+        '<td class="c-arr"><span class="arrow">'+(open?'&#8964;':'&#8250;')+'</span></td>'+
+        '</tr>'+
+        '<tr class="detail-row'+(open?' open':'')+'">'+
+        '<td colspan="5"><div class="detail-panel">'+
+          '<div class="dp-block"><div class="dp-label">Contexto</div><div class="dp-text">'+t.d+'</div></div>'+
+          '<div class="dp-block"><div class="dp-label">Último movimiento</div><div class="dp-text hi">'+t.st+'</div></div>'+
+          '<div class="dp-block"><div class="dp-label">Próximo paso</div><div class="dp-text">'+t.def+'</div></div>'+
+        '</div></td>'+
+        '</tr>';
+    }).join('');
+    return '<div class="grp-hdr"><span class="grp-name">'+g+'</span><span class="grp-count">'+items.length+' temas</span></div>'+
+      '<div class="tbl-wrap"><table>'+
+      '<thead><tr>'+
+        '<th class="c-num">#</th>'+
+        '<th class="c-tema">Tema / resumen</th>'+
+        '<th class="c-resp">Responsable</th>'+
+        '<th class="c-est">Estado</th>'+
+        '<th class="c-arr"></th>'+
+      '</tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>';
+  }).join('');
+
+  document.getElementById('board').innerHTML = html || '<div class="loading">Sin temas para el filtro seleccionado.</div>';
+
+  var now = new Date();
+  document.getElementById('fecha-hdr').textContent = now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+
+function toggleDetail(n) {
+  openDetail[n] = !openDetail[n];
+  render();
+}
+
+function buildFilters() {
+  var f = document.getElementById('filters');
+  var btns = [
+    {label:'Todos', val:'all', cls:''},
+    {label:'En proceso', val:'sproc', cls:'f-proc'},
+    {label:'Pendiente', val:'spend', cls:'f-pend'},
+    {label:'Terminado', val:'sterm', cls:'f-term'},
+    {label:'Sin novedad', val:'ssin', cls:'f-sin'},
+  ];
+  btns.forEach(function(b){
+    var el = document.createElement('button');
+    el.className = 'pill' + (b.cls?' '+b.cls:'') + (b.val==='all'?' active':'');
+    el.textContent = b.label;
+    el.onclick = function(){
+      filter = b.val;
+      document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('active'); });
+      el.classList.add('active');
+      render();
+    };
+    f.appendChild(el);
+  });
+}
+
+buildFilters();
+loadFromSheets();
+</script>
+</body>
+</html>
