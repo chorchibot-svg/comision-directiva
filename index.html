@@ -78,7 +78,7 @@ tr.detail-row.open .detail-panel{display:block}
 <body>
 
 <div class="hdr">
-  <div class="hdr-top"><h1>Comisión Directiva</h1><span id="fecha-hdr">cargando…</span></div>
+  <div class="hdr-top"><h1>Comisión Directiva <small id="sheet-tab" style="font-size:11px;font-weight:400;opacity:.5;font-family:monospace;margin-left:6px"></small></h1><span id="fecha-hdr">cargando…</span></div>
   <div class="legend">
     <div class="leg"><div class="ldot ld-term"></div>Terminado</div>
     <div class="leg"><div class="ldot ld-proc"></div>En proceso</div>
@@ -103,6 +103,7 @@ tr.detail-row.open .detail-panel{display:block}
 // ─── CONFIGURACIÓN ───────────────────────────────────────────────
 // Reemplazar SHEET_ID con el ID de la planilla Google Sheets una vez publicada
 var SHEET_ID = '1kDGLS3jmpe2vHPX3pkZX1bkjl8o55JUfpNKE05vCmhA';
+var SHEET_TAB = 'temas-W37'; // nombre de la pestaña de la planilla (actualizar junto con la URL del CSV)
 // ─────────────────────────────────────────────────────────────────
 
 var SLABEL = {term:'Terminado',proc:'En proceso',pend:'Pendiente',sin:'Sin novedad'};
@@ -299,6 +300,7 @@ function buildFilters() {
   });
 }
 
+document.getElementById('sheet-tab').textContent = '· ' + SHEET_TAB;
 buildFilters();
 loadFromSheets();
 </script>
