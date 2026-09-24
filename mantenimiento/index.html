@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mantenimiento · Pendientes</title>
+<style>
+:root{
+  --bg:#F5F4F0;--surface:#fff;--border:#E0DED8;
+  --text:#1A1916;--text2:#6B6960;--text3:#9E9C94;
+  --c-term:#166534;--bg-term:#DCFCE7;
+  --c-proc:#1D4ED8;--bg-proc:#DBEAFE;
+  --c-pend:#92400E;--bg-pend:#FEF3C7;
+  --c-urg:#991B1B;--bg-urg:#FEE2E2;
+  --c-sin:#5F5E5A;--bg-sin:#EEEDE8;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:56px}
+.hdr{background:#1A1916;color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:100}
+.hdr-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.hdr-top h1{font-size:15px;font-weight:600;letter-spacing:.02em}
+.hdr-top span{font-size:10px;opacity:.4;font-family:monospace}
+.legend{display:flex;flex-wrap:wrap;gap:10px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.6)}
+.ldot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ld-term{background:#4ade80}.ld-proc{background:#60a5fa}.ld-pend{background:#fbbf24}.ld-urg{background:#f87171}.ld-sin{background:#9ca3af}
+.filters{background:#1A1916;padding:0 12px 12px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:sticky;top:60px;z-index:99}
+.filters::-webkit-scrollbar{display:none}
+.filters-cat{background:#111;padding:0 12px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:sticky;top:106px;z-index:98}
+.filters-cat::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.55);font-family:inherit;transition:all .15s}
+.pill.active{background:#fff;color:#1A1916;border-color:#fff}
+.pill.f-term.active{background:var(--bg-term);color:var(--c-term);border-color:#86efac}
+.pill.f-proc.active{background:var(--bg-proc);color:var(--c-proc);border-color:#93c5fd}
+.pill.f-pend.active{background:var(--bg-pend);color:var(--c-pend);border-color:#fcd34d}
+.pill.f-urg.active{background:var(--bg-urg);color:var(--c-urg);border-color:#fca5a5}
+.pill.f-sin.active{background:var(--bg-sin);color:var(--c-sin);border-color:#d1d5db}
+.pill.f-cat.active{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.5)}
+.stats{display:flex;gap:7px;padding:12px 12px 4px}
+.stat{flex:1;background:var(--surface);border-radius:8px;padding:9px 8px 7px;text-align:center;border:1px solid var(--border)}
+.sn{font-size:20px;font-weight:600;line-height:1}
+.sl{font-size:9px;color:var(--text3);margin-top:3px;font-family:monospace;letter-spacing:.04em}
+.n-term{color:var(--c-term)}.n-proc{color:var(--c-proc)}.n-pend{color:var(--c-pend)}.n-urg{color:var(--c-urg)}.n-sin{color:var(--c-sin)}
+.grp-hdr{display:flex;align-items:center;gap:10px;background:#1A1916;color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;margin:14px 10px 0}
+.grp-name{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:monospace}
+.grp-count{font-size:10px;opacity:.4;font-family:monospace}
+.tbl-wrap{margin:0 10px 2px;border-radius:0 0 8px 8px;overflow:hidden;border:1px solid var(--border);border-top:none}
+table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surface);table-layout:fixed}
+th{background:#2E2D29;color:rgba(255,255,255,.5);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;text-align:left;font-family:monospace;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4;word-break:normal;overflow-wrap:break-word}
+tr:last-child td{border-bottom:none}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#F5F3EE}
+tr.row.expanded td{background:#F8F6F1}
+.c-num{width:28px;color:var(--text3);font-family:monospace;font-size:11px}
+.c-tema{width:auto}
+.c-resp{width:100px}
+.c-est{width:90px}
+.c-arr{width:20px;color:var(--text3);font-size:13px;text-align:center}
+.t-title{font-weight:600;color:var(--text);font-size:12px;line-height:1.35}
+.t-sum{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4}
+.resp-chip{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;border:1px solid #C7D2FE;background:#EEF2FF;color:#4338CA;margin:1px 2px 1px 0;white-space:nowrap}
+.sb{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;font-family:monospace;white-space:nowrap}
+.sb-term{background:var(--bg-term);color:var(--c-term)}
+.sb-proc{background:var(--bg-proc);color:var(--c-proc)}
+.sb-pend{background:var(--bg-pend);color:var(--c-pend)}
+.sb-urg{background:var(--bg-urg);color:var(--c-urg)}
+.sb-sin{background:var(--bg-sin);color:var(--c-sin)}
+tr.detail-row td{padding:0;border-bottom:1px solid var(--border);background:#FAFAF7}
+.detail-panel{padding:12px 14px 14px;display:none}
+tr.detail-row.open .detail-panel{display:block}
+.dp-block{margin-bottom:10px}
+.dp-block:last-child{margin-bottom:0}
+.dp-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-family:monospace;margin-bottom:3px}
+.dp-text{font-size:12px;color:var(--text2);line-height:1.6}
+.dp-text.hi{color:var(--text);font-weight:500}
+.arrow{display:inline-block;transition:transform .2s}
+.expanded .arrow{transform:rotate(90deg)}
+.loading{text-align:center;padding:48px 16px;color:var(--text3);font-size:13px}
+.error{text-align:center;padding:32px 16px;color:#b91c1c;font-size:12px;background:#FEF2F2;border-radius:8px;margin:12px}
+.age-chip{display:inline-block;font-size:9px;font-family:monospace;color:var(--text3);background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:1px 5px;white-space:nowrap;margin-top:3px}
+.updated-note{text-align:center;font-size:10px;color:var(--text3);padding:10px;font-family:monospace}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <h1>Mantenimiento <small id="updated-lbl" style="font-size:11px;font-weight:400;opacity:.5;font-family:monospace;margin-left:6px"></small></h1>
+    <span id="fecha-hdr">cargando…</span>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="ldot ld-urg"></div>Urgente</div>
+    <div class="leg"><div class="ldot ld-proc"></div>En proceso</div>
+    <div class="leg"><div class="ldot ld-pend"></div>Pendiente</div>
+    <div class="leg"><div class="ldot ld-term"></div>Resuelto</div>
+    <div class="leg"><div class="ldot ld-sin"></div>Sin novedad</div>
+  </div>
+</div>
+
+<div class="filters" id="filters-status"></div>
+<div class="filters-cat" id="filters-cat"></div>
+
+<div class="stats">
+  <div class="stat"><div class="sn" id="s-total">—</div><div class="sl">TOTAL</div></div>
+  <div class="stat"><div class="sn n-urg" id="s-urg">—</div><div class="sl">URGENTE</div></div>
+  <div class="stat"><div class="sn n-proc" id="s-proc">—</div><div class="sl">EN PROC.</div></div>
+  <div class="stat"><div class="sn n-pend" id="s-pend">—</div><div class="sl">PENDIENTE</div></div>
+  <div class="stat"><div class="sn n-term" id="s-term">—</div><div class="sl">RESUELTO</div></div>
+</div>
+
+<div id="board"><div class="loading">Cargando…</div></div>
+
+<script>
+var SLABEL = {urg:'Urgente', proc:'En proceso', pend:'Pendiente', term:'Resuelto', sin:'Sin novedad'};
+var filterStatus = 'all';
+var filterCat = 'all';
+var openDetail = {};
+var T = [];
+
+function parseDateAR(s) {
+  if (!s) return null;
+  var p = s.split('/');
+  if (p.length !== 3) return null;
+  return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+}
+
+function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+function daysLabel(n) { return n === 1 ? '1 día' : n + ' días'; }
+
+function ageChip(t) {
+  var fi = parseDateAR(t.fi);
+  if (!fi) return '';
+  var ref = t.fc ? parseDateAR(t.fc) : new Date();
+  if (!ref) return '';
+  var d = daysBetween(fi, ref);
+  if (d < 0) return '';
+  return '<br><span class="age-chip">'+d+'d</span>';
+}
+
+function datePanelHtml(t) {
+  if (!t.fi && !t.fc) return '';
+  var now = new Date();
+  var fi = parseDateAR(t.fi);
+  var fc = parseDateAR(t.fc);
+  var html = '';
+  if (fi) {
+    html += '<div class="dp-block"><div class="dp-label">Fecha detección</div><div class="dp-text">'+t.fi+'</div></div>';
+    var elapsed = daysBetween(fi, fc || now);
+    if (fc) {
+      html += '<div class="dp-block"><div class="dp-label">Fecha resolución</div><div class="dp-text">'+t.fc+'</div></div>';
+      html += '<div class="dp-block"><div class="dp-label">Duración total</div><div class="dp-text hi">'+daysLabel(elapsed)+'</div></div>';
+    } else {
+      html += '<div class="dp-block"><div class="dp-label">Tiempo abierto</div><div class="dp-text hi">'+daysLabel(elapsed)+' (sin resolver)</div></div>';
+    }
+  }
+  return html;
+}
+
+function respHtml(resp) {
+  return (resp||[]).map(function(r){ return '<span class="resp-chip">'+r+'</span>'; }).join('');
+}
+
+function getGroups() {
+  var groups = [];
+  T.forEach(function(t){
+    if(groups.indexOf(t.g)===-1) groups.push(t.g);
+  });
+  return groups;
+}
+
+function render() {
+  var filtered = T.filter(function(t){
+    var okS = filterStatus === 'all' || t.s === filterStatus;
+    var okC = filterCat === 'all' || t.g === filterCat;
+    return okS && okC;
+  });
+
+  document.getElementById('s-total').textContent = filtered.length;
+  document.getElementById('s-urg').textContent = T.filter(function(t){return t.s==='urg';}).length;
+  document.getElementById('s-proc').textContent = T.filter(function(t){return t.s==='proc';}).length;
+  document.getElementById('s-pend').textContent = T.filter(function(t){return t.s==='pend';}).length;
+  document.getElementById('s-term').textContent = T.filter(function(t){return t.s==='term';}).length;
+
+  var groups = [];
+  filtered.forEach(function(t){ if(groups.indexOf(t.g)===-1) groups.push(t.g); });
+
+  var html = groups.map(function(g){
+    var items = filtered.filter(function(t){return t.g===g;});
+    var rows = items.map(function(t){
+      var open = !!openDetail[t.n];
+      return '<tr class="row'+(open?' expanded':'')+'" onclick="toggleDetail('+t.n+')">'+
+        '<td class="c-num">'+t.n+'</td>'+
+        '<td class="c-tema"><div class="t-title">'+t.t+'</div><div class="t-sum">'+t.sum+'</div></td>'+
+        '<td class="c-resp">'+respHtml(t.resp)+'</td>'+
+        '<td class="c-est"><span class="sb sb-'+t.s+'">'+SLABEL[t.s]+'</span>'+ageChip(t)+'</td>'+
+        '<td class="c-arr"><span class="arrow">'+(open?'&#8964;':'&#8250;')+'</span></td>'+
+        '</tr>'+
+        '<tr class="detail-row'+(open?' open':'')+'">'+
+        '<td colspan="5"><div class="detail-panel">'+
+          '<div class="dp-block"><div class="dp-label">Contexto</div><div class="dp-text">'+t.d+'</div></div>'+
+          '<div class="dp-block"><div class="dp-label">Último estado</div><div class="dp-text hi">'+t.st+'</div></div>'+
+          '<div class="dp-block"><div class="dp-label">Próximo paso</div><div class="dp-text">'+t.def+'</div></div>'+
+          datePanelHtml(t)+
+        '</div></td>'+
+        '</tr>';
+    }).join('');
+    return '<div class="grp-hdr"><span class="grp-name">'+g+'</span><span class="grp-count">'+items.length+' ítems</span></div>'+
+      '<div class="tbl-wrap"><table>'+
+      '<thead><tr>'+
+        '<th class="c-num">#</th>'+
+        '<th class="c-tema">Tema / resumen</th>'+
+        '<th class="c-resp">Responsable</th>'+
+        '<th class="c-est">Estado</th>'+
+        '<th class="c-arr"></th>'+
+      '</tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>';
+  }).join('');
+
+  document.getElementById('board').innerHTML = html || '<div class="loading">Sin ítems para el filtro seleccionado.</div>';
+
+  var now = new Date();
+  document.getElementById('fecha-hdr').textContent = now.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+
+function toggleDetail(n) {
+  openDetail[n] = !openDetail[n];
+  render();
+}
+
+function buildStatusFilters() {
+  var f = document.getElementById('filters-status');
+  var btns = [
+    {label:'Todos', val:'all', cls:''},
+    {label:'Urgente', val:'urg', cls:'f-urg'},
+    {label:'En proceso', val:'proc', cls:'f-proc'},
+    {label:'Pendiente', val:'pend', cls:'f-pend'},
+    {label:'Resuelto', val:'term', cls:'f-term'},
+    {label:'Sin novedad', val:'sin', cls:'f-sin'},
+  ];
+  btns.forEach(function(b){
+    var el = document.createElement('button');
+    el.className = 'pill'+(b.cls?' '+b.cls:'')+(b.val==='all'?' active':'');
+    el.textContent = b.label;
+    el.onclick = function(){
+      filterStatus = b.val;
+      document.querySelectorAll('#filters-status .pill').forEach(function(p){ p.classList.remove('active'); });
+      el.classList.add('active');
+      render();
+    };
+    f.appendChild(el);
+  });
+}
+
+function buildCatFilters() {
+  var f = document.getElementById('filters-cat');
+  var groups = getGroups();
+  var all = document.createElement('button');
+  all.className = 'pill f-cat active';
+  all.textContent = 'Todas';
+  all.onclick = function(){
+    filterCat = 'all';
+    document.querySelectorAll('#filters-cat .pill').forEach(function(p){ p.classList.remove('active'); });
+    all.classList.add('active');
+    render();
+  };
+  f.appendChild(all);
+  groups.forEach(function(g){
+    var el = document.createElement('button');
+    el.className = 'pill f-cat';
+    el.textContent = g;
+    el.onclick = function(){
+      filterCat = g;
+      document.querySelectorAll('#filters-cat .pill').forEach(function(p){ p.classList.remove('active'); });
+      el.classList.add('active');
+      render();
+    };
+    f.appendChild(el);
+  });
+}
+
+fetch('./data.json')
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    T = data.items || [];
+    if (data.updated) {
+      document.getElementById('updated-lbl').textContent = '· actualizado ' + data.updated;
+    }
+    buildStatusFilters();
+    buildCatFilters();
+    render();
+  })
+  .catch(function(e){
+    document.getElementById('board').innerHTML = '<div class="error">Error al cargar datos.<br><small>'+e+'</small></div>';
+  });
+</script>
+</body>
+</html>

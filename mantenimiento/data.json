@@ -1,0 +1,122 @@
+{
+  "updated": "24/09/2026",
+  "items": [
+    {
+      "n": 1,
+      "g": "Infraestructura",
+      "t": "Árbol fracturado — extracción urgente",
+      "sum": "Fractura en altura, valla preventiva colocada",
+      "d": "Daniel detectó crujidos fuertes en el tronco durante tareas de fertilización el 21/9. El árbol está quebrado en altura. Colocó valla para restringir circulación en el área por riesgo de caída ante vientos.",
+      "st": "Valla puesta desde 21/9. Extracción pendiente de contratar.",
+      "def": "Contratar extracción del árbol",
+      "resp": ["Daniel Orona", "Alejandro S.R."],
+      "s": "pend",
+      "fi": "21/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 2,
+      "g": "Infraestructura",
+      "t": "Baño de guardia",
+      "sum": "Obra pendiente con fecha límite 29/9",
+      "d": "Pendiente de finalizar según acta CD del 06/09/2026. Fecha límite definida: 29/9.",
+      "st": "En ejecución. Fecha límite 29/09/2026.",
+      "def": "Verificar finalización antes del 29/9",
+      "resp": ["Daniel Orona"],
+      "s": "proc",
+      "fi": "06/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 3,
+      "g": "Infraestructura",
+      "t": "Habilitación House — zonificación municipal",
+      "sum": "Zonificación aún no emitida por el municipio",
+      "d": "Carla consultó al municipio el 22/9. La zonificación no había salido aún. Sin fecha estimada de emisión.",
+      "st": "En espera de resolución municipal. Última consulta: 22/09/2026.",
+      "def": "Seguimiento semanal con Carla al municipio",
+      "resp": ["Carla Bergamo"],
+      "s": "proc",
+      "fi": "01/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 4,
+      "g": "Infraestructura",
+      "t": "Pileta — pérdida de agua",
+      "sum": "Diagnóstico técnico pendiente antes de excavar",
+      "d": "Se detectó pérdida de agua en pileta. Leandro gestiona visita de especialista para diagnóstico gratuito antes de tomar decisión de excavación. Acta CD 06/09/2026.",
+      "st": "Pendiente visita de especialista (gestiona Leandro).",
+      "def": "Confirmar fecha de visita del especialista en piletas",
+      "resp": ["Leandro"],
+      "s": "pend",
+      "fi": "06/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 5,
+      "g": "Equipamiento",
+      "t": "Aires acondicionados — presupuesto Leo (4 equipos)",
+      "sum": "Presupuesto $1.480.000 por comedor central, gimnasio, Housito y Garita",
+      "d": "Leo (técnico AC) presentó presupuesto para completar trabajos tras limpieza profunda y diagnóstico ya pagados. Comedor central $610.000, Gimnasio $200.000, Housito $180.000, Garita $490.000. Garantía confirmada por Leo sobre todos los equipos reparados.",
+      "st": "Presupuesto recibido el 21/09/2026. Decisión de aprobación pendiente.",
+      "def": "CD aprueba presupuesto y coordina fecha de trabajo con Leo",
+      "resp": ["Alejandro S.R.", "Daniel Orona"],
+      "s": "pend",
+      "fi": "21/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 6,
+      "g": "Equipamiento",
+      "t": "Aires comedor glorieta y entrada — evaluar reparar vs. reemplazar",
+      "sum": "Leo no garantiza reparación; evaluar equipo nuevo",
+      "d": "Los dos aires del comedor (lado glorieta y lado entrada) están en condición crítica. Leo no puede garantizar resultado de reparación. Daniel recomienda evaluar si conviene reparar o comprar equipo nuevo y ver cómo cubrir la refrigeración del comedor con los equipos existentes mientras tanto.",
+      "st": "A evaluar. Pendiente decisión de CD.",
+      "def": "CD define: reparar o comprar equipo nuevo para comedor",
+      "resp": ["Alejandro S.R."],
+      "s": "pend",
+      "fi": "21/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 7,
+      "g": "Equipamiento",
+      "t": "Vestuario de personal",
+      "sum": "Presupuestos enviados, pendiente confirmación de Dubot",
+      "d": "Personal con calzado y pantalones en mal estado. Se enviaron presupuestos a Dubot (proveedor habitual). Pendiente confirmación de disponibilidad de talles y colores. Antecedente: compra alternativa más barata resultó en problemas de talle/color + costos de flete.",
+      "st": "Presupuestos enviados. Esperando respuesta de Dubot.",
+      "def": "Confirmar pedido con Dubot una vez confirmados talles",
+      "resp": ["Daniel Orona"],
+      "s": "proc",
+      "fi": "06/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 8,
+      "g": "Seguridad",
+      "t": "Luminarias — 5 unidades desaparecidas",
+      "sum": "5 luminarias desaparecieron del depósito; relevamiento pendiente",
+      "d": "Daniel compró un lote de 10 luminarias. 5 desaparecieron del depósito. Pendiente relevamiento nocturno y diurno de luminarias (numeración de postes, diferenciación municipales/propias, poda de ramas obstructoras). Acta CD 06/09/2026.",
+      "st": "Relevamiento pendiente. Origen de desaparición no determinado.",
+      "def": "Realizar relevamiento de luminarias (diurno y nocturno); investigar extravío",
+      "resp": ["Daniel Orona"],
+      "s": "pend",
+      "fi": "06/09/2026",
+      "fc": ""
+    },
+    {
+      "n": 9,
+      "g": "Seguridad",
+      "t": "Cámaras de seguridad — mapa definitivo",
+      "sum": "Recorrido 8/9 realizado; mapa de ubicaciones a enviar a Daniel",
+      "d": "Se coordinó recorrido de especialista el 8/9 para relevamiento de cámaras. Pendiente enviar a Daniel el mapa definitivo de ubicaciones. También pendiente relevamiento nocturno para verificar cobertura real. Acta CD 06/09/2026.",
+      "st": "Recorrido realizado el 08/09/2026. Mapa aún no enviado a Daniel.",
+      "def": "Enviar mapa definitivo de cámaras a Daniel Orona",
+      "resp": ["Daniel Orona"],
+      "s": "proc",
+      "fi": "06/09/2026",
+      "fc": ""
+    }
+  ]
+}
